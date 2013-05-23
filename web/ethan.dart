@@ -214,6 +214,23 @@ void drawD(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
+void drawY(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+  num height = length/2;
+  transact(context, (){
+    context..translate(0, height)
+           ..scale(1, -1);
+    drawHalfO(context, spacing: spacing, width: length, height: height);
+  });
+  
+  context.translate(height, height);
+  transact(context, (){
+    context.scale(-1, 1);
+    drawL(context, spacing: spacing, width: height, height: height);
+  });
+  
+  drawL(context, spacing: spacing, width: height, height: height);
+  context.stroke();
+}
 
 // GENERAL FUNCTIONS
 
@@ -255,7 +272,8 @@ Map<String, Function> letterFunctions =
   "p": drawP,
   "r": drawR,
   "s": drawS,
-  "t": drawT
+  "t": drawT,
+  "y": drawY
 };
 
 void main() {
@@ -268,43 +286,47 @@ void main() {
   context.lineWidth = 2;
   clearContext(context);
   
-  transact(context, (){
-    context.translate(0, 300);
-    drawDiagonals(context, spacing: 8, length: 80);
-    context.stroke();
-  });
-  
-  transact(context, () {
-    context.translate(100, 300);
-    drawV(context, spacing: 8, width: 80, height: 40);
-    context.stroke();
-  });
-  
-  transact(context, () {
-    context.translate(200, 300);
-    drawSqLines(context, 80, spacing: 8);
-    context.stroke();
-  });
-  
-  transact(context, () {
-    context.translate(300, 300);
-    drawL(context, spacing: 8, width: 80, height: 80);
-    context.stroke();
-  });
-  
-  transact(context, () {
-    context.translate(400, 300);
-    drawRect(context, spacing: 8, width: 80, height: 40);
-    context.stroke();
-  });
-  
-  transact(context, () {
-    context.translate(500, 300);
-    drawRect(context, width: 80, height: 80, spacing: 8);
-  });
+//  transact(context, (){
+//    context.translate(0, 300);
+//    drawDiagonals(context, spacing: 8, length: 80);
+//    context.stroke();
+//  });
+//  
+//  transact(context, () {
+//    context.translate(100, 300);
+//    drawV(context, spacing: 8, width: 80, height: 40);
+//    context.stroke();
+//  });
+//  
+//  transact(context, () {
+//    context.translate(200, 300);
+//    drawSqLines(context, 80, spacing: 8);
+//    context.stroke();
+//  });
+//  
+//  transact(context, () {
+//    context.translate(300, 300);
+//    drawL(context, spacing: 8, width: 80, height: 80);
+//    context.stroke();
+//  });
+//  
+//  transact(context, () {
+//    context.translate(400, 300);
+//    drawRect(context, spacing: 8, width: 80, height: 40);
+//    context.stroke();
+//  });
+//  
+//  transact(context, () {
+//    context.translate(500, 300);
+//    drawRect(context, width: 80, height: 80, spacing: 8);
+//  });
   
   // actual letters
-  List<String> name = ["ethan","psher", "bond"];
+  
+  context..translate(88, 96)
+         ..setStrokeColorRgb(0, 128, 0, 1);
+  
+  List<String> name = ["ethan","psher", "bondy"];
   for (num i = 0; i < name.length; i++) {
     String word = name[i];
     for (num j = 0; j < word.length; j++) {
@@ -313,7 +335,7 @@ void main() {
       Function drawLetter = letterFunctions[letter];
       
       transact(context, () {
-        context.translate(j*100, i*100);
+        context.translate(j*96, i*96);
         drawLetter(context, length: 80, spacing: 8);
       });
     }
