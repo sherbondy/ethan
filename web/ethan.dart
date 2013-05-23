@@ -66,7 +66,12 @@ void drawHalfO(CanvasRenderingContext2D context, {num spacing: 10, num width: 10
   });
 }
 
-void drawO(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
+void drawO(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+  drawRect(context, spacing: spacing, width: length, height: length);
+  context.stroke();
+}
+
+void drawRect(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
   drawHalfO(context, spacing: spacing, width: width, height: height/2);
   context.stroke();
   // bottom
@@ -80,7 +85,7 @@ void drawO(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, n
 
 void drawA(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
-  drawO(context, spacing: spacing, width: length, height: height);
+  drawRect(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
   drawHalfO(context, spacing: spacing, width: length, height: height);
@@ -124,7 +129,7 @@ void drawE(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
 
 void drawP(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
-  drawO(context, spacing: spacing, width: length, height: height);
+  drawRect(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
   drawL(context, spacing: spacing, width: length, height: height);
@@ -149,16 +154,16 @@ void drawS(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
 
 void drawB(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
-  drawO(context, spacing: spacing, width: length, height: height);
+  drawRect(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
-  drawO(context, spacing: spacing, width: length, height: height);
+  drawRect(context, spacing: spacing, width: length, height: height);
   context.stroke();
 }
 
 void drawR(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
-  drawO(context, spacing: spacing, width: length, height: height);
+  drawRect(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
   drawHalfO(context, spacing: spacing, width: length/2, height: height);
@@ -203,8 +208,10 @@ void txRotateCenter(CanvasRenderingContext2D context, num angle, num width, num 
 Map<String, Function> letterFunctions = 
 {
   "a": drawA,
+  "b": drawB,
   "e": drawE,
   "h": drawH,
+  "o": drawO,
   "n": drawN,
   "p": drawP,
   "r": drawR,
@@ -248,17 +255,17 @@ void main() {
   
   transact(context, () {
     context.translate(400, 300);
-    drawO(context, spacing: 8, width: 80, height: 40);
+    drawRect(context, spacing: 8, width: 80, height: 40);
     context.stroke();
   });
   
   transact(context, () {
     context.translate(500, 300);
-    drawO(context, width: 80, height: 80, spacing: 8);
+    drawRect(context, width: 80, height: 80, spacing: 8);
   });
   
   // actual letters
-  List<String> name = ["ethan","psher"];
+  List<String> name = ["ethan","psher", "bon"];
   for (num i = 0; i < name.length; i++) {
     String word = name[i];
     for (num j = 0; j < word.length; j++) {
