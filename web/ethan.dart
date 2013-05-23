@@ -180,6 +180,14 @@ void txRotateCenter(CanvasRenderingContext2D context, num angle, num width, num 
   });
 }
 
+Map<String, Function> letterFunctions = 
+{
+  "a": drawA,
+  "e": drawE,
+  "h": drawH,
+  "n": drawN,
+  "t": drawT
+};
 
 void main() {
   // Enable this to use Shadow DOM in the browser.
@@ -227,28 +235,15 @@ void main() {
   
   // actual letters
   
-  transact(context, () {
-    context.translate(000, 100);
-    drawE(context, length: 80, spacing: 8);
-  });
-  
-  transact(context, () {
-    context.translate(100, 100);
-    drawT(context, length: 80, spacing: 8);
-  });
-  
-  transact(context, () {
-    context.translate(200, 100);
-    drawH(context, length: 80, spacing: 8);
-  });
-  
-  transact(context, () {
-    context.translate(300, 100);
-    drawA(context, length: 80, spacing: 8);
-  });
-  
-  transact(context, () {
-    context.translate(400, 100);
-    drawN(context, spacing: 8, length: 80);
-  });
+  String name = "ethan";
+  for (num i = 0; i < name.length; i++) {
+    String letter = name.substring(i, i+1);
+    window.console.log(letter);
+    Function drawLetter = letterFunctions[letter];
+    
+    transact(context, () {
+      context.translate(i*100, 100);
+      drawLetter(context, length: 80, spacing: 8);
+    });
+  }
 }
