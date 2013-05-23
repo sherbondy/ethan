@@ -28,21 +28,26 @@ void drawL(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, n
   }
 }
 
-void drawV(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
-  for (num pos = 0; pos < length/2; pos += spacing) {
-    context..moveTo(length - pos, length)
-           ..lineTo(pos, 2*pos)
-           ..lineTo(pos, length);
+void drawV(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
+  num tanTheta = width/height;
+  num theta = atan(tanTheta);
+  
+  for (num pos = 0; pos < height/2; pos += spacing) {
+    num triWidth = width - pos - pos/sin(theta);
+    num triHeight = triWidth/tanTheta;
+    context..moveTo(triWidth + pos, height)
+           ..lineTo(pos, height - triHeight)
+           ..lineTo(pos, height);
   }
 }
 
 void drawN(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
-  drawV(context, spacing: spacing, length: length);
+  drawV(context, spacing: spacing, width: length, height: length);
   context.stroke();
   // right/top of N
   transact(context, (){
     rotateCenter(context, PI, length, length, (){
-      drawV(context, spacing: spacing, length: length);
+      drawV(context, spacing: spacing, width: length, height: length);
     });
     context.stroke();
   });
@@ -153,6 +158,42 @@ void drawE(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
+void drawP(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+  num height = length/2;
+  drawRect(context, spacing: spacing, width: length, height: height);
+  
+  context.translate(0, height);
+  drawL(context, spacing: spacing, width: length, height: height);
+  context.stroke();
+}
+
+void drawS(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+  num width = length/2;
+  
+  rotateCenter(context, PI/2, length, length, (){
+    transact(context, (){
+      context..scale(1, -1)
+             ..translate(0, -length);
+      drawRectTop(context, spacing: spacing, width: width/2, height: length);
+    });
+    
+    context.translate(width, 0);
+    drawRectTop(context, spacing: spacing, width: width/2, height: length);
+  });
+  context.stroke();
+}
+
+void drawB(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+  num height = length/2;
+  drawRect(context, spacing: spacing, width: length, height: height);
+  
+  context.translate(0, height);
+  drawRect(context, spacing: spacing, width: length, height: height);
+  context.stroke();
+}
+
+
+// GENERAL FUNCTIONS
 
 void clearContext(CanvasRenderingContext2D context) {
   context..setFillColorRgb(255, 255, 255, 1)
@@ -186,6 +227,8 @@ Map<String, Function> letterFunctions =
   "e": drawE,
   "h": drawH,
   "n": drawN,
+  "p": drawP,
+  "s": drawS,
   "t": drawT
 };
 
@@ -206,7 +249,7 @@ void main() {
   
   transact(context, () {
     context.translate(100, 0);
-    drawV(context, spacing: 8, length: 80);
+    drawV(context, spacing: 8, width: 80, height: 40);
     context.stroke();
   });
   
@@ -246,4 +289,14 @@ void main() {
       drawLetter(context, length: 80, spacing: 8);
     });
   }
+  
+  transact(context, () {
+    context.translate(0, 200);
+    drawP(context, length: 80, spacing: 8);
+  });
+  
+  transact(context, () {
+    context.translate(100, 200);
+    drawS(context, length: 80, spacing: 8);
+  });
 }
