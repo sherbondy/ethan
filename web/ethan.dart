@@ -7,7 +7,7 @@ import 'package:web_ui/web_ui.dart';
  * http://www.dartlang.org/articles/dart-web-components/.
  */
 
-void drawLines(CanvasRenderingContext2D context, {num spacing: 10, num height: 100, num width: 100}) {  
+void drawLines(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {  
   for (num y = 0; y < height; y += spacing) {
     context..moveTo(0, y)
            ..lineTo(width, y);
@@ -16,6 +16,13 @@ void drawLines(CanvasRenderingContext2D context, {num spacing: 10, num height: 1
 
 void drawSqLines(CanvasRenderingContext2D context, num length, {num spacing: 10}) {
   drawLines(context, spacing: spacing, height: length, width: length);
+}
+
+void drawDiagonals(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {      
+  for (num pos = 0; pos < length; pos += spacing) {
+    context..moveTo(0, pos)
+           ..lineTo(length - pos, length);
+  }
 }
 
 void drawL(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
@@ -174,7 +181,38 @@ void drawR(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
+void drawD(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+  num height = length/2;
+  transact(context, (){
+    context.translate(-length, 0);
+    rotateCenter(context, -PI/2, 2*length, 0, (){
+      drawHalfO(context, spacing: spacing, width: length, height: height);
+    });
+  });
+ 
+  context.translate(length/2, 0);
+  drawDiagonals(context, spacing: spacing, length: height);
 
+  transact(context, (){
+    context.translate(0, length);
+    rotateCenter(context, -PI/2, 0, 0, (){
+      drawDiagonals(context, spacing: spacing, length: height);
+    });
+  });
+  
+  context..translate(0, length)
+         ..scale(1, -1);
+  drawDiagonals(context, spacing: spacing, length: height);
+  
+  transact(context, (){
+    context.translate(0, length);
+    rotateCenter(context, -PI/2, 0, 0, (){
+      drawDiagonals(context, spacing: spacing, length: height);
+    });
+  });
+  
+  context.stroke();
+}
 
 
 // GENERAL FUNCTIONS
@@ -209,6 +247,7 @@ Map<String, Function> letterFunctions =
 {
   "a": drawA,
   "b": drawB,
+  "d": drawD,
   "e": drawE,
   "h": drawH,
   "o": drawO,
@@ -229,9 +268,9 @@ void main() {
   context.lineWidth = 2;
   clearContext(context);
   
-  txRotateCenter(context, PI/2, 80, 80, (){
+  transact(context, (){
     context.translate(0, 300);
-    drawSqLines(context, 80, spacing: 8);
+    drawDiagonals(context, spacing: 8, length: 80);
     context.stroke();
   });
   
@@ -265,7 +304,7 @@ void main() {
   });
   
   // actual letters
-  List<String> name = ["ethan","psher", "bon"];
+  List<String> name = ["ethan","psher", "bond"];
   for (num i = 0; i < name.length; i++) {
     String word = name[i];
     for (num j = 0; j < word.length; j++) {
