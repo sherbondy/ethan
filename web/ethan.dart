@@ -54,27 +54,26 @@ void drawN(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   });
 }
 
-void drawHalfO(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
-  drawL(context, spacing: spacing, width: length/2, height: length/2);
+void drawHalfO(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
+  drawL(context, spacing: spacing, width: width/2, height: height);
   context.stroke();
   // right half
   transact(context, (){
-    context.translate(length/2, 0);
-    rotateCenter(context, PI/2, length/2, length/2, (){
-      drawL(context, spacing: spacing, width: length/2, height: length/2);
-    });
+    context..translate(width, 0)
+           ..scale(-1, 1);
+    drawL(context, spacing: spacing, width: width/2, height: height);
     context.stroke();
   });
 }
 
 void drawO(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
-  drawHalfO(context, spacing: spacing, length: length);
+  drawHalfO(context, spacing: spacing, width: length, height: length/2);
   context.stroke();
   // bottom
   transact(context, (){
     context..translate(0, length)
            ..scale(1, -1);
-    drawHalfO(context, spacing: spacing, length: length);
+    drawHalfO(context, spacing: spacing, width: length, height: length/2);
     context.stroke();
   });
 }
@@ -198,9 +197,10 @@ void drawR(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   drawRect(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
-  drawV(context, spacing: spacing, width: length, height: height);
+  drawHalfO(context, spacing: spacing, width: length/2, height: height);
   
-  drawV(context, spacing: spacing, width: height, height: length);
+  context.translate(length/2, 0);
+  drawL(context, spacing: spacing, width: length/2, height: height);
   
   context.stroke();
 }
