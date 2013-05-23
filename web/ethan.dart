@@ -66,71 +66,35 @@ void drawHalfO(CanvasRenderingContext2D context, {num spacing: 10, num width: 10
   });
 }
 
-void drawO(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
-  drawHalfO(context, spacing: spacing, width: length, height: length/2);
+void drawO(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
+  drawHalfO(context, spacing: spacing, width: width, height: height/2);
   context.stroke();
   // bottom
   transact(context, (){
-    context..translate(0, length)
+    context..translate(0, height)
            ..scale(1, -1);
-    drawHalfO(context, spacing: spacing, width: length, height: length/2);
-    context.stroke();
-  });
-}
-
-void drawRectTop(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 50}) {
-  num smallSide = min(width, height);
-  num lineWidth = (width - 2*smallSide);
-
-  // left cap
-  transact(context, (){
-    drawL(context, spacing: spacing, width: smallSide, height: height);
-    // line
-    context.translate(smallSide, 0);
-    if (lineWidth > 0) {
-      drawLines(context, spacing: spacing, width: lineWidth, height: height);
-    }
-  });
-  
-  // right cap
-  num rightX = 2*smallSide + max(0, lineWidth);
-  transact(context, (){
-    context..translate(rightX, 0)
-           ..scale(-1, 1);
-    drawL(context, spacing: spacing, width: smallSide, height: height);
-  });
-}
-
-void drawRect(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 50}) {
-  drawRectTop(context, spacing: spacing, width: width, height: height/2);
-  context.stroke();
-  // bottom
-  transact(context, (){
-    context.translate(0, height/2);
-    rotateCenter(context, PI, width, height/2, (){
-      drawRectTop(context, spacing: spacing, width: width, height: height/2);
-    });
+    drawHalfO(context, spacing: spacing, width: width, height: height/2);
     context.stroke();
   });
 }
 
 void drawA(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
-  drawRect(context, spacing: spacing, width: length, height: height);
+  drawO(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
-  drawRectTop(context, spacing: spacing, width: length, height: height);
+  drawHalfO(context, spacing: spacing, width: length, height: height);
   context.stroke();
 }
 
 void drawH(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
   txRotateCenter(context, PI, length, height, (){
-    drawRectTop(context, spacing: spacing, width: length, height: height);
+    drawHalfO(context, spacing: spacing, width: length, height: height);
   });
   
   context.translate(0, height);
-  drawRectTop(context, spacing: spacing, width: length, height: height);
+  drawHalfO(context, spacing: spacing, width: length, height: height);
   context.stroke();
 }
 
@@ -151,16 +115,16 @@ void drawE(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   num width = length/2;
   
   rotateCenter(context, -PI/2, length, length, (){
-    drawRectTop(context, spacing: spacing, width: width/2, height: length);
+    drawHalfO(context, spacing: spacing, width: width, height: length);
     context.translate(width, 0);
-    drawRectTop(context, spacing: spacing, width: width/2, height: length);
+    drawHalfO(context, spacing: spacing, width: width, height: length);
   });
   context.stroke();
 }
 
 void drawP(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
-  drawRect(context, spacing: spacing, width: length, height: height);
+  drawO(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
   drawL(context, spacing: spacing, width: length, height: height);
@@ -174,27 +138,27 @@ void drawS(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
     transact(context, (){
       context..scale(1, -1)
              ..translate(0, -length);
-      drawRectTop(context, spacing: spacing, width: width/2, height: length);
+      drawHalfO(context, spacing: spacing, width: width, height: length);
     });
     
     context.translate(width, 0);
-    drawRectTop(context, spacing: spacing, width: width/2, height: length);
+    drawHalfO(context, spacing: spacing, width: width, height: length);
   });
   context.stroke();
 }
 
 void drawB(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
-  drawRect(context, spacing: spacing, width: length, height: height);
+  drawO(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
-  drawRect(context, spacing: spacing, width: length, height: height);
+  drawO(context, spacing: spacing, width: length, height: height);
   context.stroke();
 }
 
 void drawR(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
   num height = length/2;
-  drawRect(context, spacing: spacing, width: length, height: height);
+  drawO(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
   drawHalfO(context, spacing: spacing, width: length/2, height: height);
@@ -259,38 +223,38 @@ void main() {
   clearContext(context);
   
   txRotateCenter(context, PI/2, 80, 80, (){
-    context.translate(0, 200);
+    context.translate(0, 300);
     drawSqLines(context, 80, spacing: 8);
     context.stroke();
   });
   
   transact(context, () {
-    context.translate(100, 200);
+    context.translate(100, 300);
     drawV(context, spacing: 8, width: 80, height: 40);
     context.stroke();
   });
   
   transact(context, () {
-    context.translate(200, 200);
+    context.translate(200, 300);
     drawSqLines(context, 80, spacing: 8);
     context.stroke();
   });
   
   transact(context, () {
-    context.translate(300, 200);
+    context.translate(300, 300);
     drawL(context, spacing: 8, width: 80, height: 80);
     context.stroke();
   });
   
   transact(context, () {
-    context.translate(400, 200);
-    drawRect(context, spacing: 8, width: 80, height: 40);
+    context.translate(400, 300);
+    drawO(context, spacing: 8, width: 80, height: 40);
     context.stroke();
   });
   
   transact(context, () {
-    context.translate(500, 200);
-    drawO(context, length: 80, spacing: 8);
+    context.translate(500, 300);
+    drawO(context, width: 80, height: 80, spacing: 8);
   });
   
   // actual letters
