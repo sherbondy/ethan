@@ -276,57 +276,29 @@ Map<String, Function> letterFunctions =
   "y": drawY
 };
 
+num blockSize = 80;
+num innerSpacing = 8;
+num margin = 16;
+num get translation => blockSize + margin;
+
 void main() {
-  // Enable this to use Shadow DOM in the browser.
-  //useShadowDom = true;
-  
   CanvasElement canvas = query("#ethan");
   CanvasRenderingContext2D context = canvas.getContext("2d");
 
   context.lineWidth = 2;
   clearContext(context);
   
-//  transact(context, (){
-//    context.translate(0, 300);
-//    drawDiagonals(context, spacing: 8, length: 80);
-//    context.stroke();
-//  });
-//  
-//  transact(context, () {
-//    context.translate(100, 300);
-//    drawV(context, spacing: 8, width: 80, height: 40);
-//    context.stroke();
-//  });
-//  
-//  transact(context, () {
-//    context.translate(200, 300);
-//    drawSqLines(context, 80, spacing: 8);
-//    context.stroke();
-//  });
-//  
-//  transact(context, () {
-//    context.translate(300, 300);
-//    drawL(context, spacing: 8, width: 80, height: 80);
-//    context.stroke();
-//  });
-//  
-//  transact(context, () {
-//    context.translate(400, 300);
-//    drawRect(context, spacing: 8, width: 80, height: 40);
-//    context.stroke();
-//  });
-//  
-//  transact(context, () {
-//    context.translate(500, 300);
-//    drawRect(context, width: 80, height: 80, spacing: 8);
-//  });
-  
-  // actual letters
-  
-  context..translate(88, 96)
-         ..setStrokeColorRgb(0, 128, 0, 1);
   
   List<String> name = ["ethan","psher", "bondy"];
+  
+  num width = name[0].length * translation;
+  num height = name.length * translation;
+  num offsetX = (canvas.width - width)/2;
+  num offsetY = (canvas.height - height)/2;
+
+  context..setStrokeColorRgb(0, 128, 0, 1)
+         ..translate(offsetX, offsetY);
+  
   for (num i = 0; i < name.length; i++) {
     String word = name[i];
     for (num j = 0; j < word.length; j++) {
@@ -335,8 +307,8 @@ void main() {
       Function drawLetter = letterFunctions[letter];
       
       transact(context, () {
-        context.translate(j*96, i*96);
-        drawLetter(context, length: 80, spacing: 8);
+        context.translate(j*translation, i*translation);
+        drawLetter(context, length: blockSize, spacing: innerSpacing);
       });
     }
   }
