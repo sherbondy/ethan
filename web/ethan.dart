@@ -2,30 +2,40 @@ import 'dart:html';
 import 'dart:math';
 import 'package:web_ui/web_ui.dart';
 
-/**
- * Learn about the Web UI package by visiting
- * http://www.dartlang.org/articles/dart-web-components/.
- */
-
-void drawLines(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {  
+void drawLines(CanvasRenderingContext2D context, 
+               {num spacing: 10, num width: 100, num height: 100}) {  
   for (num y = 0; y < height; y += spacing) {
     context..moveTo(0, y)
            ..lineTo(width, y);
   }
 }
 
-void drawSqLines(CanvasRenderingContext2D context, num length, {num spacing: 10}) {
+void drawSqLines(CanvasRenderingContext2D context, num length, 
+                 {num spacing: 10}) {
   drawLines(context, spacing: spacing, height: length, width: length);
 }
 
-void drawDiagonals(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {      
+void drawDiagonals(CanvasRenderingContext2D context, 
+                   {num spacing: 10, num length: 100}) {      
   for (num pos = 0; pos < length; pos += spacing) {
     context..moveTo(0, pos)
            ..lineTo(length - pos, length);
   }
 }
 
-void drawL(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
+void drawDiagonalSquare(CanvasRenderingContext2D context, 
+                        {num spacing: 10, num length: 100}) {
+  drawDiagonals(context, spacing: spacing, length: length);
+
+  transact(context, (){
+    context..translate(length, length)
+           ..scale(-1,-1);
+    drawDiagonals(context, spacing: spacing, length: length);
+  });
+}
+
+void drawL(CanvasRenderingContext2D context, 
+           {num spacing: 10, num width: 100, num height: 100}) {
   num smallSide = min(width, height);
   
   for (num pos = 0; pos < smallSide; pos += spacing) {
@@ -35,7 +45,8 @@ void drawL(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, n
   }
 }
 
-void drawV(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
+void drawV(CanvasRenderingContext2D context, 
+           {num spacing: 10, num width: 100, num height: 100}) {
   num smallSide = min(width, height);
   num tanTheta = width/height;
   num theta = atan(tanTheta);
@@ -49,7 +60,8 @@ void drawV(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, n
   }
 }
 
-void drawN(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawN(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   drawV(context, spacing: spacing, width: length, height: length);
   context.stroke();
   // right/top of N
@@ -61,7 +73,8 @@ void drawN(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   });
 }
 
-void drawHalfO(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
+void drawHalfO(CanvasRenderingContext2D context, 
+               {num spacing: 10, num width: 100, num height: 100}) {
   drawL(context, spacing: spacing, width: width/2, height: height);
   context.stroke();
   // right half
@@ -73,12 +86,14 @@ void drawHalfO(CanvasRenderingContext2D context, {num spacing: 10, num width: 10
   });
 }
 
-void drawO(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawO(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   drawRect(context, spacing: spacing, width: length, height: length);
   context.stroke();
 }
 
-void drawRect(CanvasRenderingContext2D context, {num spacing: 10, num width: 100, num height: 100}) {
+void drawRect(CanvasRenderingContext2D context, 
+              {num spacing: 10, num width: 100, num height: 100}) {
   drawHalfO(context, spacing: spacing, width: width, height: height/2);
   context.stroke();
   // bottom
@@ -90,7 +105,8 @@ void drawRect(CanvasRenderingContext2D context, {num spacing: 10, num width: 100
   });
 }
 
-void drawA(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawA(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num height = length/2;
   drawRect(context, spacing: spacing, width: length, height: height);
   
@@ -99,7 +115,8 @@ void drawA(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
-void drawH(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawH(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num height = length/2;
   txRotateCenter(context, PI, length, height, (){
     drawHalfO(context, spacing: spacing, width: length, height: height);
@@ -110,7 +127,8 @@ void drawH(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
-void drawT(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawT(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num width = length/2;
   
   context.translate(width, 0);
@@ -123,7 +141,8 @@ void drawT(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
-void drawE(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawE(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num width = length/2;
   
   rotateCenter(context, -PI/2, length, length, (){
@@ -134,7 +153,8 @@ void drawE(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
-void drawP(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawP(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num height = length/2;
   drawRect(context, spacing: spacing, width: length, height: height);
   
@@ -143,7 +163,8 @@ void drawP(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
-void drawS(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawS(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num width = length/2;
   
   rotateCenter(context, PI/2, length, length, (){
@@ -159,7 +180,8 @@ void drawS(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
-void drawB(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawB(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num height = length/2;
   drawRect(context, spacing: spacing, width: length, height: height);
   
@@ -168,7 +190,8 @@ void drawB(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
-void drawR(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawR(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num height = length/2;
   drawRect(context, spacing: spacing, width: length, height: height);
   
@@ -181,7 +204,8 @@ void drawR(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   context.stroke();
 }
 
-void drawD(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawD(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num height = length/2;
   transact(context, (){
     context.translate(-length, 0);
@@ -191,30 +215,17 @@ void drawD(CanvasRenderingContext2D context, {num spacing: 10, num length: 100})
   });
  
   context.translate(length/2, 0);
-  drawDiagonals(context, spacing: spacing, length: height);
-
-  transact(context, (){
-    context.translate(0, length);
-    rotateCenter(context, -PI/2, 0, 0, (){
-      drawDiagonals(context, spacing: spacing, length: height);
-    });
-  });
+  drawDiagonalSquare(context, spacing: spacing, length: height);
   
   context..translate(0, length)
          ..scale(1, -1);
-  drawDiagonals(context, spacing: spacing, length: height);
-  
-  transact(context, (){
-    context.translate(0, length);
-    rotateCenter(context, -PI/2, 0, 0, (){
-      drawDiagonals(context, spacing: spacing, length: height);
-    });
-  });
+  drawDiagonalSquare(context, spacing: spacing, length: height);
   
   context.stroke();
 }
 
-void drawY(CanvasRenderingContext2D context, {num spacing: 10, num length: 100}) {
+void drawY(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
   num height = length/2;
   transact(context, (){
     context..translate(0, height)
@@ -246,7 +257,8 @@ void transact(CanvasRenderingContext2D context, Function fn) {
 }
 
 // pass in a canvas context, the rotation angle, and the width and height of the object drawn by drawFn
-void rotateCenter(CanvasRenderingContext2D context, num angle, num width, num height, Function drawFn) {
+void rotateCenter(CanvasRenderingContext2D context, 
+                  num angle, num width, num height, Function drawFn) {
   context..translate(width/2, height/2)
          ..rotate(angle)
          ..translate(-width/2, -height/2);
@@ -254,7 +266,8 @@ void rotateCenter(CanvasRenderingContext2D context, num angle, num width, num he
 }
 
 // wrap rotation in a transaction for convenience
-void txRotateCenter(CanvasRenderingContext2D context, num angle, num width, num height, Function drawFn) {
+void txRotateCenter(CanvasRenderingContext2D context, 
+                    num angle, num width, num height, Function drawFn) {
   transact(context, (){
     rotateCenter(context, angle, width, height, drawFn);
   });
@@ -312,5 +325,4 @@ void main() {
       });
     }
   }
-  
 }
