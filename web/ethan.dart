@@ -274,40 +274,47 @@ num blockSize = 80;
 num innerSpacing = 8;
 num margin = 16;
 num get translation => blockSize + margin;
+List<String> name = ["ethan", "psher", "bondy"];
+
+void drawName(CanvasRenderingContext2D context, List<String> name) {
+  transact(context, () {
+    context.lineWidth = 2;
+    clearContext(context);
+      
+    num maxLength = name.fold(0, (a, b) => max(a, b.length));
+    num width =  maxLength * translation;
+    num height = name.length * translation;
+    num offsetX = (context.canvas.width - width)/2;
+    num offsetY = (context.canvas.height - height)/2;
+  
+    //Pattern vowel = new RegExp("[aeiou]");
+    Random rand = new Random();
+  
+    context.translate(offsetX, offsetY);
+    
+    for (num i = 0; i < name.length; i++) {
+      String word = name[i];
+      for (num j = 0; j < word.length; j++) {
+        String letter = word.substring(j, j+1);
+        Function drawLetter = letterFunctions[letter];
+        
+        transact(context, () {        
+          context..translate(j*translation, i*translation)
+                 ..beginPath()
+                 ..setStrokeColorRgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 1);
+          drawLetter(context, length: blockSize, spacing: innerSpacing);
+          context.stroke();  
+        });
+      }
+    }
+  });
+}
 
 void main() {
   CanvasElement canvas = query("#ethan");
   CanvasRenderingContext2D context = canvas.getContext("2d");
 
-  context.lineWidth = 2;
-  clearContext(context);
+  canvas.onClick.listen((event) => drawName(context, name));
   
-  List<String> name = ["ethan", "psher", "bondy"];
-  
-  num maxLength = name.fold(0, (a, b) => max(a, b.length));
-  num width =  maxLength * translation;
-  num height = name.length * translation;
-  num offsetX = (canvas.width - width)/2;
-  num offsetY = (canvas.height - height)/2;
-
-  Pattern vowel = new RegExp("[aeiou]");
-  Random rand = new Random();
-
-  context..translate(offsetX, offsetY);
-  
-  for (num i = 0; i < name.length; i++) {
-    String word = name[i];
-    for (num j = 0; j < word.length; j++) {
-      String letter = word.substring(j, j+1);
-      Function drawLetter = letterFunctions[letter];
-      
-      transact(context, () {        
-        context..translate(j*translation, i*translation)
-               ..beginPath()
-               ..setStrokeColorRgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 1);
-        drawLetter(context, length: blockSize, spacing: innerSpacing);
-        context.stroke();  
-      });
-    }
-  }
+  drawName(context, name);
 }
