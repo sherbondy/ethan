@@ -63,45 +63,38 @@ void drawV(CanvasRenderingContext2D context,
 void drawN(CanvasRenderingContext2D context, 
            {num spacing: 10, num length: 100}) {
   drawV(context, spacing: spacing, width: length, height: length);
-  context.stroke();
   // right/top of N
   transact(context, (){
     rotateCenter(context, PI, length, length, (){
       drawV(context, spacing: spacing, width: length, height: length);
     });
-    context.stroke();
   });
 }
 
 void drawHalfO(CanvasRenderingContext2D context, 
                {num spacing: 10, num width: 100, num height: 100}) {
   drawL(context, spacing: spacing, width: width/2, height: height);
-  context.stroke();
   // right half
   transact(context, (){
     context..translate(width, 0)
            ..scale(-1, 1);
     drawL(context, spacing: spacing, width: width/2, height: height);
-    context.stroke();
   });
 }
 
 void drawO(CanvasRenderingContext2D context, 
            {num spacing: 10, num length: 100}) {
   drawRect(context, spacing: spacing, width: length, height: length);
-  context.stroke();
 }
 
 void drawRect(CanvasRenderingContext2D context, 
               {num spacing: 10, num width: 100, num height: 100}) {
   drawHalfO(context, spacing: spacing, width: width, height: height/2);
-  context.stroke();
   // bottom
   transact(context, (){
     context..translate(0, height)
            ..scale(1, -1);
     drawHalfO(context, spacing: spacing, width: width, height: height/2);
-    context.stroke();
   });
 }
 
@@ -112,7 +105,6 @@ void drawA(CanvasRenderingContext2D context,
   
   context.translate(0, height);
   drawHalfO(context, spacing: spacing, width: length, height: height);
-  context.stroke();
 }
 
 void drawH(CanvasRenderingContext2D context, 
@@ -124,7 +116,6 @@ void drawH(CanvasRenderingContext2D context,
   
   context.translate(0, height);
   drawHalfO(context, spacing: spacing, width: length, height: height);
-  context.stroke();
 }
 
 void drawT(CanvasRenderingContext2D context, 
@@ -138,7 +129,6 @@ void drawT(CanvasRenderingContext2D context,
   });
   
   drawL(context, spacing: spacing, width: width, height: length);
-  context.stroke();
 }
 
 void drawE(CanvasRenderingContext2D context, 
@@ -150,7 +140,6 @@ void drawE(CanvasRenderingContext2D context,
     context.translate(width, 0);
     drawHalfO(context, spacing: spacing, width: width, height: length);
   });
-  context.stroke();
 }
 
 void drawP(CanvasRenderingContext2D context, 
@@ -160,7 +149,6 @@ void drawP(CanvasRenderingContext2D context,
   
   context.translate(0, height);
   drawL(context, spacing: spacing, width: length, height: height);
-  context.stroke();
 }
 
 void drawS(CanvasRenderingContext2D context, 
@@ -177,7 +165,6 @@ void drawS(CanvasRenderingContext2D context,
     context.translate(width, 0);
     drawHalfO(context, spacing: spacing, width: width, height: length);
   });
-  context.stroke();
 }
 
 void drawB(CanvasRenderingContext2D context, 
@@ -187,7 +174,6 @@ void drawB(CanvasRenderingContext2D context,
   
   context.translate(0, height);
   drawRect(context, spacing: spacing, width: length, height: height);
-  context.stroke();
 }
 
 void drawR(CanvasRenderingContext2D context, 
@@ -199,9 +185,7 @@ void drawR(CanvasRenderingContext2D context,
   drawHalfO(context, spacing: spacing, width: length/2, height: height);
   
   context.translate(length/2, 0);
-  drawL(context, spacing: spacing, width: length/2, height: height);
-  
-  context.stroke();
+  drawL(context, spacing: spacing, width: length/2, height: height);  
 }
 
 void drawD(CanvasRenderingContext2D context, 
@@ -219,9 +203,7 @@ void drawD(CanvasRenderingContext2D context,
   
   context..translate(0, length)
          ..scale(1, -1);
-  drawDiagonalSquare(context, spacing: spacing, length: height);
-  
-  context.stroke();
+  drawDiagonalSquare(context, spacing: spacing, length: height);  
 }
 
 void drawY(CanvasRenderingContext2D context, 
@@ -240,7 +222,6 @@ void drawY(CanvasRenderingContext2D context,
   });
   
   drawL(context, spacing: spacing, width: height, height: height);
-  context.stroke();
 }
 
 // GENERAL FUNCTIONS
@@ -301,27 +282,31 @@ void main() {
   context.lineWidth = 2;
   clearContext(context);
   
+  List<String> name = ["ethan", "psher", "bondy"];
   
-  List<String> name = ["ethan","psher", "bondy"];
-  
-  num width = name[0].length * translation;
+  num maxLength = name.fold(0, (a, b) => max(a, b.length));
+  num width =  maxLength * translation;
   num height = name.length * translation;
   num offsetX = (canvas.width - width)/2;
   num offsetY = (canvas.height - height)/2;
 
-  context..setStrokeColorRgb(0, 128, 0, 1)
-         ..translate(offsetX, offsetY);
+  Pattern vowel = new RegExp("[aeiou]");
+  Random rand = new Random();
+
+  context..translate(offsetX, offsetY);
   
   for (num i = 0; i < name.length; i++) {
     String word = name[i];
     for (num j = 0; j < word.length; j++) {
       String letter = word.substring(j, j+1);
-      window.console.log(letter);
       Function drawLetter = letterFunctions[letter];
       
-      transact(context, () {
-        context.translate(j*translation, i*translation);
+      transact(context, () {        
+        context..translate(j*translation, i*translation)
+               ..beginPath()
+               ..setStrokeColorRgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 1);
         drawLetter(context, length: blockSize, spacing: innerSpacing);
+        context.stroke();  
       });
     }
   }
