@@ -224,8 +224,8 @@ void drawY(CanvasRenderingContext2D context,
   drawL(context, spacing: spacing, width: height, height: height);
 }
 
-// spacing is not actually used
 num imageCount = 92;
+// spacing is not actually used
 void drawBrains(CanvasRenderingContext2D context, 
                 {num spacing: 10, num length: 100}) {
   ImageElement brainImage = new ImageElement();
@@ -240,8 +240,7 @@ void drawBrains(CanvasRenderingContext2D context,
 // GENERAL FUNCTIONS
 
 void clearContext(CanvasRenderingContext2D context) {
-  context..setFillColorRgb(255, 255, 255, 1)
-         ..fillRect(0, 0, context.canvas.width, context.canvas.height);
+  context..fillRect(0, 0, context.canvas.width, context.canvas.height);
 }
 
 void transact(CanvasRenderingContext2D context, Function fn) {
@@ -286,17 +285,67 @@ Map<String, Function> letterFunctions =
 
 num blockSize = 80;
 num innerSpacing = 8;
+num lineWidth = 2;
 num margin = 16;
 num xTranslation = 0;
 num yTranslation = 0;
 num get translation => blockSize + margin;
 List<String> name = ["ethan*", "p*sher", "*bondy"];
+List<List<Map<String, num>>> currentColors = [];
+List<List<Map<String, num>>> nextColors = [];
 Random rand = new Random();
 
-void drawName(CanvasRenderingContext2D context, List<String> name) {
+Map<String, num> randomColor() {
+  return {"r": rand.nextInt(255),
+          "g": rand.nextInt(255),
+          "b": rand.nextInt(255)};
+}
+
+bool sameColors(Map<String, num> a, Map<String, num> b) {
+  bool same = true;
+  a.forEach((k, v) {
+    if (!b.containsKey(k) || v != b[k]) {
+      same = false;
+    }
+  });
+  return same;
+}
+
+void initializeColors(num nameLength) {
+  for (num i = 0; i < nameLength; i++) {
+    currentColors.add([]);
+    nextColors.add([]);
+  }
+}
+
+void updateColor(num i, num j) {
+  // handle color transition
+  if (currentColors[i].length <= j) {
+    currentColors[i].add(randomColor());
+    nextColors[i].add(randomColor());
+  }
+  
+  Map<String, num> currentColor = currentColors[i][j];
+  Map<String, num> nextColor = nextColors[i][j];
+  
+  // should really just use hex literals
+  if (sameColors(currentColor, nextColor)) {
+    nextColors[i][j] = randomColor();
+  } else {
+    nextColor.forEach((k, v) {
+      if (currentColor[k] < v) {
+        currentColor[k] += 1;
+      } else if (currentColor[k] > v) {
+        currentColor[k] -= 1;
+      }
+      currentColors[i][j] = currentColor;
+    });
+  }
+}
+
+void drawName(CanvasRenderingContext2D context, List<String> name, num delta) {
   transact(context, () {
-    context.lineWidth = 2;
-    clearContext(context);
+    context.lineWidth = lineWidth;
       
     num maxLength = name.fold(0, (a, b) => max(a, b.length));
     num width =  maxLength * translation;
@@ -305,10 +354,16 @@ void drawName(CanvasRenderingContext2D context, List<String> name) {
     num offsetY = (context.canvas.height - height)/2;
   
     //Pattern vowel = new RegExp("[aeiou]");
-//    context.translate(offsetX, offsetY);
+    //context.translate(offsetX, offsetY);
+    
+    // initialize currentColors and nextColors
+    if (currentColors.length != name.length) {
+      initializeColors(name.length);
+    }
     
     for (num i = 0; i < name.length; i++) {
       String word = name[i];
+      
       for (num j = 0; j < word.length; j++) {
         String letter = word.substring(j, j+1);
         Function drawLetter = letterFunctions[letter];
@@ -316,23 +371,43 @@ void drawName(CanvasRenderingContext2D context, List<String> name) {
         xTranslation = offsetX + j*translation;
         yTranslation = offsetY + i*translation;
         
+        updateColor(i, j);
+        Map<String, num> currentColor = currentColors[i][j];
+                        
         transact(context, () {        
           context..translate(xTranslation, yTranslation)
                  ..beginPath()
-                 ..setStrokeColorRgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 1);
-          drawLetter(context, length: blockSize, spacing: innerSpacing);
-          context.stroke();  
+                 ..setStrokeColorRgb(currentColor["r"], 
+                                     currentColor["g"], 
+                                     currentColor["b"], 1);
+          
+          if (letter != "*") {
+            num avgBrightness = currentColor.values.fold(0, (a, b) => a+b)/3;
+            num bgBrightness = 255 - avgBrightness.ceil();
+            context..setFillColorRgb(bgBrightness, bgBrightness, bgBrightness, 1)
+                   ..fillRect(-lineWidth, -lineWidth, blockSize+2*lineWidth, blockSize+2*lineWidth);
+          }
+          if (letter != "*" || delta.floor() % 60 == 0) {
+            drawLetter(context, length: blockSize, spacing: innerSpacing);
+            context.stroke();
+          }
         });
       }
     }
+  });
+  
+  window.animationFrame.then((num delta){
+    drawName(context, name, delta);
   });
 }
 
 void main() {
   CanvasElement canvas = query("#ethan");
   CanvasRenderingContext2D context = canvas.getContext("2d");
+  context.fillStyle = "#000000";
+  clearContext(context);
 
-  canvas.onClick.listen((event) => drawName(context, name));
+  // canvas.onClick.listen((event) => drawName(context, name));
   
-  drawName(context, name);
+  window.animationFrame.then((num delta) => drawName(context, name, delta));
 }
