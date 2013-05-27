@@ -381,13 +381,15 @@ void drawName(CanvasRenderingContext2D context, List<String> name, num delta) {
                                      currentColor["g"], 
                                      currentColor["b"], 1);
           
-          if (letter != "*") {
-            num avgBrightness = currentColor.values.fold(0, (a, b) => a+b)/3;
-            num bgBrightness = 255 - avgBrightness.ceil();
-            context..setFillColorRgb(bgBrightness, bgBrightness, bgBrightness, 1)
-                   ..fillRect(-lineWidth, -lineWidth, blockSize+2*lineWidth, blockSize+2*lineWidth);
-          }
           if (letter != "*" || delta.floor() % 60 == 0) {
+            num perceivedBrightness = (0.299*currentColor["r"] + 
+                                       0.587*currentColor["g"] + 
+                                       0.114*currentColor["b"]);
+            num bgBrightness = 255 - perceivedBrightness.ceil();
+            context..setFillColorRgb(bgBrightness, bgBrightness, bgBrightness, 1)
+                   ..fillRect(-lineWidth, -lineWidth, 
+                              blockSize+2*lineWidth, blockSize+2*lineWidth);
+            
             drawLetter(context, length: blockSize, spacing: innerSpacing);
             context.stroke();
           }
