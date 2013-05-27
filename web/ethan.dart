@@ -224,6 +224,19 @@ void drawY(CanvasRenderingContext2D context,
   drawL(context, spacing: spacing, width: height, height: height);
 }
 
+// spacing is not actually used
+num imageCount = 92;
+void drawBrains(CanvasRenderingContext2D context, 
+                {num spacing: 10, num length: 100}) {
+  ImageElement brainImage = new ImageElement();
+  brainImage.src = "brain/image_05-21-2013_${rand.nextInt(imageCount)}.png";
+  num currentX = xTranslation;
+  num currentY = yTranslation;
+  
+  brainImage.onLoad.listen((event) =>
+    context.drawImageScaled(brainImage, currentX, currentY, length, length));
+}
+
 // GENERAL FUNCTIONS
 
 void clearContext(CanvasRenderingContext2D context) {
@@ -267,14 +280,18 @@ Map<String, Function> letterFunctions =
   "r": drawR,
   "s": drawS,
   "t": drawT,
-  "y": drawY
+  "y": drawY,
+  "*": drawBrains
 };
 
 num blockSize = 80;
 num innerSpacing = 8;
 num margin = 16;
+num xTranslation = 0;
+num yTranslation = 0;
 num get translation => blockSize + margin;
-List<String> name = ["ethan", "psher", "bondy"];
+List<String> name = ["ethan*", "p*sher", "*bondy"];
+Random rand = new Random();
 
 void drawName(CanvasRenderingContext2D context, List<String> name) {
   transact(context, () {
@@ -288,9 +305,7 @@ void drawName(CanvasRenderingContext2D context, List<String> name) {
     num offsetY = (context.canvas.height - height)/2;
   
     //Pattern vowel = new RegExp("[aeiou]");
-    Random rand = new Random();
-  
-    context.translate(offsetX, offsetY);
+//    context.translate(offsetX, offsetY);
     
     for (num i = 0; i < name.length; i++) {
       String word = name[i];
@@ -298,8 +313,11 @@ void drawName(CanvasRenderingContext2D context, List<String> name) {
         String letter = word.substring(j, j+1);
         Function drawLetter = letterFunctions[letter];
         
+        xTranslation = offsetX + j*translation;
+        yTranslation = offsetY + i*translation;
+        
         transact(context, () {        
-          context..translate(j*translation, i*translation)
+          context..translate(xTranslation, yTranslation)
                  ..beginPath()
                  ..setStrokeColorRgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 1);
           drawLetter(context, length: blockSize, spacing: innerSpacing);
