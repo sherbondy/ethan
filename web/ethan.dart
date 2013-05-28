@@ -381,18 +381,20 @@ void drawName(CanvasRenderingContext2D context, List<String> name, num delta) {
                                      currentColor["g"], 
                                      currentColor["b"], 1);
           
-          if (letter != "*" || delta.floor() % 60 == 0) {
+          if (letter != "*") {
+            // make the background the inverse of the perceived brightness of the stroke
             num perceivedBrightness = (0.299*currentColor["r"] + 
                                        0.587*currentColor["g"] + 
                                        0.114*currentColor["b"]);
             num bgBrightness = 255 - perceivedBrightness.ceil();
+            num bgLength = blockSize + 2*lineWidth;
             context..setFillColorRgb(bgBrightness, bgBrightness, bgBrightness, 1)
-                   ..fillRect(-lineWidth, -lineWidth, 
-                              blockSize+2*lineWidth, blockSize+2*lineWidth);
-            
+                   ..fillRect(-lineWidth, -lineWidth, bgLength, bgLength);
             drawLetter(context, length: blockSize, spacing: innerSpacing);
-            context.stroke();
+          } else if (delta.floor() % 60 == 0) {
+            drawLetter(context, length: blockSize, spacing: innerSpacing);
           }
+          context.stroke();
         });
       }
     }
