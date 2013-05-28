@@ -34,7 +34,7 @@ void drawDiagonalSquare(CanvasRenderingContext2D context,
   });
 }
 
-void drawL(CanvasRenderingContext2D context, 
+void drawHalfT(CanvasRenderingContext2D context, 
            {num spacing: 10, num width: 100, num height: 100}) {
   num smallSide = min(width, height);
   
@@ -51,7 +51,7 @@ void drawV(CanvasRenderingContext2D context,
   num tanTheta = width/height;
   num theta = atan(tanTheta);
   
-  for (num pos = 0; pos < smallSide/2; pos += spacing) {
+  for (num pos = 0; pos < smallSide/2 - 2*lineWidth; pos += spacing) {
     num triWidth = width - pos - pos/cos(theta);
     num triHeight = triWidth/tanTheta;
     context..moveTo(triWidth + pos, height)
@@ -73,12 +73,12 @@ void drawN(CanvasRenderingContext2D context,
 
 void drawHalfO(CanvasRenderingContext2D context, 
                {num spacing: 10, num width: 100, num height: 100}) {
-  drawL(context, spacing: spacing, width: width/2, height: height);
+  drawHalfT(context, spacing: spacing, width: width/2, height: height);
   // right half
   transact(context, (){
     context..translate(width, 0)
            ..scale(-1, 1);
-    drawL(context, spacing: spacing, width: width/2, height: height);
+    drawHalfT(context, spacing: spacing, width: width/2, height: height);
   });
 }
 
@@ -125,10 +125,10 @@ void drawT(CanvasRenderingContext2D context,
   context.translate(width, 0);
   transact(context, (){
     context.scale(-1, 1);
-    drawL(context, spacing: spacing, width: width, height: length);
+    drawHalfT(context, spacing: spacing, width: width, height: length);
   });
   
-  drawL(context, spacing: spacing, width: width, height: length);
+  drawHalfT(context, spacing: spacing, width: width, height: length);
 }
 
 void drawE(CanvasRenderingContext2D context, 
@@ -148,7 +148,7 @@ void drawP(CanvasRenderingContext2D context,
   drawRect(context, spacing: spacing, width: length, height: height);
   
   context.translate(0, height);
-  drawL(context, spacing: spacing, width: length, height: height);
+  drawHalfT(context, spacing: spacing, width: length, height: height);
 }
 
 void drawS(CanvasRenderingContext2D context, 
@@ -185,7 +185,7 @@ void drawR(CanvasRenderingContext2D context,
   drawHalfO(context, spacing: spacing, width: length/2, height: height);
   
   context.translate(length/2, 0);
-  drawL(context, spacing: spacing, width: length/2, height: height);  
+  drawHalfT(context, spacing: spacing, width: length/2, height: height);  
 }
 
 void drawD(CanvasRenderingContext2D context, 
@@ -218,10 +218,33 @@ void drawY(CanvasRenderingContext2D context,
   context.translate(height, height);
   transact(context, (){
     context.scale(-1, 1);
-    drawL(context, spacing: spacing, width: height, height: height);
+    drawHalfT(context, spacing: spacing, width: height, height: height);
   });
   
-  drawL(context, spacing: spacing, width: height, height: height);
+  drawHalfT(context, spacing: spacing, width: height, height: height);
+}
+
+void drawC(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
+  txRotateCenter(context, -PI/2, length, length, (){
+    drawHalfO(context, spacing: spacing, width: length, height: length);
+  });
+}
+
+void drawI(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
+  txRotateCenter(context, -PI/2, length, length, (){
+    drawH(context, spacing: spacing, length: length);
+  });
+}
+
+void drawL(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
+  transact(context, (){
+    context..translate(0, length)
+           ..scale(1, -1);
+    drawHalfT(context, spacing: spacing, width: length, height: length);
+  });
 }
 
 num imageCount = 92;
@@ -270,9 +293,12 @@ Map<String, Function> letterFunctions =
 {
   "a": drawA,
   "b": drawB,
+  "c": drawC,
   "d": drawD,
   "e": drawE,
   "h": drawH,
+  "i": drawI,
+  "l": drawL,
   "o": drawO,
   "n": drawN,
   "p": drawP,
@@ -284,13 +310,17 @@ Map<String, Function> letterFunctions =
 };
 
 num blockSize = 80;
-num innerSpacing = 8;
+num innerSpacing = 4;
 num lineWidth = 2;
 num margin = 16;
 num xTranslation = 0;
 num yTranslation = 0;
 num get translation => blockSize + margin;
+
+// THE NAME
 List<String> name = ["ethan*", "p*sher", "*bondy"];
+//
+
 List<List<Map<String, num>>> currentColors = [];
 List<List<Map<String, num>>> nextColors = [];
 Random rand = new Random();
