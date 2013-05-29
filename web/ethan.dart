@@ -131,6 +131,27 @@ void drawT(CanvasRenderingContext2D context,
   drawHalfT(context, spacing: spacing, width: width, height: length);
 }
 
+void drawU(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
+  txRotateCenter(context, PI, length, length, (){
+    drawHalfO(context, spacing: spacing, width: length, height: length);
+  });
+}
+
+void drawJ(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
+  num width = length/2;
+  
+  txRotateCenter(context, PI/2, width, width, (){
+    drawHalfO(context, spacing: spacing, width: length, height: width);
+  });
+  
+  transact(context, (){
+    context.translate(width, 0);
+    drawHalfT(context, spacing: spacing, width: width, height: length);
+  });
+}
+
 void drawE(CanvasRenderingContext2D context, 
            {num spacing: 10, num length: 100}) {
   num width = length/2;
@@ -139,6 +160,21 @@ void drawE(CanvasRenderingContext2D context,
     drawHalfO(context, spacing: spacing, width: width, height: length);
     context.translate(width, 0);
     drawHalfO(context, spacing: spacing, width: width, height: length);
+  });
+}
+
+void drawF(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
+  num width = length/2;
+  
+  txRotateCenter(context, -PI/2, length, length, (){
+    context.translate(width, 0);
+    drawHalfO(context, spacing: spacing, width: width, height: length);
+  });
+  
+  transact(context, (){
+    context.translate(0, width);
+    drawHalfT(context, spacing: spacing, width: length, height: width);
   });
 }
 
@@ -247,6 +283,13 @@ void drawL(CanvasRenderingContext2D context,
   });
 }
 
+void drawM(CanvasRenderingContext2D context, 
+           {num spacing: 10, num length: 100}) {
+  txRotateCenter(context, PI/2, length, length, (){
+    drawE(context, spacing: spacing, length: length);
+  });
+}
+  
 num imageCount = 92;
 // spacing is not actually used
 void drawBrains(CanvasRenderingContext2D context, 
@@ -296,30 +339,36 @@ Map<String, Function> letterFunctions =
   "c": drawC,
   "d": drawD,
   "e": drawE,
+  "f": drawF,
   "h": drawH,
   "i": drawI,
+  "j": drawJ,
   "l": drawL,
-  "o": drawO,
+  "m": drawM,
   "n": drawN,
+  "o": drawO,
   "p": drawP,
   "r": drawR,
   "s": drawS,
   "t": drawT,
+  "u": drawU,
   "y": drawY,
   "*": drawBrains
 };
 
 num blockSize = 80;
-num innerSpacing = 4;
+num innerSpacing = 8;
 num lineWidth = 2;
 num margin = 16;
 num xTranslation = 0;
 num yTranslation = 0;
 num get translation => blockSize + margin;
 
+
 // THE NAME
-List<String> name = ["ethan*", "p*sher", "*bondy"];
-//
+List<String> name = ["hobo*", "*your", "abode"];
+// HASHEM
+
 
 List<List<Map<String, num>>> currentColors = [];
 List<List<Map<String, num>>> nextColors = [];
